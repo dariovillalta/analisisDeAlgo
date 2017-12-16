@@ -1,16 +1,134 @@
 import './main.html';
 
 var networkTSP, nodesTSP, edgesTSP;
+var totalPathCost;
 
 Template.main.helpers({
 });
 
-function loadReservacionesArreglo() {
+function print(arr) {
+    for (var i = 0; i < arr.length; i++) {
+        console.log(arr[i]);
+    };
+}
+
+function getEdgesOfNodeTSP(nodeId) {
+    return edgesTSP.filter(function (edge) {
+        return edge.from === nodeId || edge.to === nodeId;
+    });
+}
+
+function shortestDistanceFromNode(edges, node) {
+    var shortestPathNode, shortestPathValue;
+    console.log('***************');
+    console.log(edges);
+    //Validar cuando el tamano del arreglo es 1
+    var longitud;
+    for (var i = 0; i < edges.length-1; i++) {
+        if(i == 0){
+            shortestPathValue = edges[i].value;
+            if(node != edges[i].to)
+                shortestPathNode = edges[i].to;
+            else
+                shortestPathNode = edges[i].from;
+        }
+        if(shortestPathValue > edges[i+1].value){
+            if(node != edges[i+1].to)
+                shortestPathNode = edges[i+1].to;
+            else
+                shortestPathNode = edges[i+1].from;
+            shortestPathValue = edges[i+1].value;
+        }
+    };
+    if(edges.length == 1){
+        for (var i = 0; i < edges.length; i++) {
+            if(node != edges[i].to)
+                shortestPathNode = edges[i].to;
+            else
+                shortestPathNode = edges[i].from;
+            shortestPathValue = edges[i].value;
+        };
+    }
+    console.log('shortestPathValue');
+    console.log(shortestPathValue);
+    console.log(shortestPathValue+shortestPathValue);
+    console.log('shortestPathNode');
+    console.log(shortestPathNode);
+    if(!isNaN(shortestPathValue))
+        totalPathCost+=parseInt(shortestPathValue);
+    return shortestPathNode;
 }
 
 Template.main.events({
     'click #recorrerTSP'(e){
-        //
+        console.log(networkTSP.getConnectedNodes(0));
+        console.log(getEdgesOfNodeTSP(3));
+        console.log(shortestDistanceFromNode(getEdgesOfNodeTSP(3), 3));
+        console.log(edgesTSP);
+        var currentNode = 0;
+        var visitedNodes = [];
+        var unvisitedNodes = [];
+        totalPathCost = 0;
+        //llenando nodos no visitados
+        for (var i = 0; i < nodesTSP.length; i++) {
+            unvisitedNodes.push(nodesTSP[i].id);
+        };
+        //Mientras no se hayan visitados todos los nodos
+        console.log('/////////');
+        console.log('/////////');
+        while(visitedNodes.length != nodesTSP.length){
+            visitedNodes.push(currentNode);
+            /*console.log('visitedNodes');
+            console.log(visitedNodes);
+            console.log(networkTSP);
+            console.log(networkTSP.edges);*/
+            // arr = arreglo de vertices
+            var arr = $.map(networkTSP.edges, function(value, index) {
+                return [value];
+            });
+            // consiguiendo el nodo
+            /*console.log('nodo');
+            console.log(nodo);*/
+            //totalPathCost+=nodo.value;
+            /*console.log('totalPathCost');
+            console.log(totalPathCost);
+            console.log(unvisitedNodes);*/
+            for (var i = 0; i < unvisitedNodes.length; i++) {
+                if(unvisitedNodes[i] == currentNode){
+                    unvisitedNodes.splice(i, 1);
+                    break;
+                }
+            };
+            //console.log(unvisitedNodes);
+            var edges = getEdgesOfNodeTSP(currentNode);
+            console.log('currentNode');
+            console.log(currentNode);
+            /*console.log('edges');
+            console.log(edges);
+            print(edges);
+            console.log('visitedNodes');
+            console.log(visitedNodes);
+            print(visitedNodes);*/
+            for (var i = 0; i < visitedNodes.length; i++) {
+                for (var j = 0; j < edges.length; j++) {
+                    if((visitedNodes[i] == edges[j].to && currentNode != edges[j].to) || (visitedNodes[i] == edges[j].from && currentNode != edges[j].from))
+                        edges.splice(j,1);
+                };
+            };
+            /*console.log('edges');
+            console.log(edges);
+            print(edges);*/
+            /*console.log('currentNode');
+            console.log(currentNode);*/
+            currentNode = shortestDistanceFromNode(edges, currentNode);
+            //console.log(currentNode);
+            /*while( jQuery.inArray( currentNode, visitedNodes ) != -1 ){
+                console.log(jQuery.inArray( currentNode, visitedNodes ));
+                currentNode = shortestDistanceFromNode(getEdgesOfNodeTSP(currentNode), currentNode);
+            }*/
+        }
+        console.log(visitedNodes);
+        console.log(totalPathCost);
     }
 });
 
