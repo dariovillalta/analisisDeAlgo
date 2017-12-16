@@ -1,6 +1,9 @@
 import './main.html';
 
 var networkTSP, nodesTSP, edgesTSP;
+var networkVC, nodesVC, edgesVC;
+var networkKB, nodesKB, edgesKB;
+var networkCli, nodesCli, edgesCli;
 var totalPathCost;
 
 Template.main.helpers({
@@ -138,53 +141,58 @@ Template.main.onCreated(function () {
 Template.main.onRendered(function () {
         nodesTSP = [];
         edgesTSP = [];
+        nodesVC = [];
+        edgesVC = [];
+        nodesKB = [];
+        edgesKB = [];
+        nodesCli = [];
+        edgesCli = [];
+
         var connectionCount = [];
+        var connectionCountVC = [];
+        var connectionCountKB = [];
+        var connectionCountCli = [];
 
         // randomly create some nodes and edges
         //var nodeCount = document.getElementById('nodeCount').value;
-        var nodeCount = 10;
+
+        var nodeCount = 10; //TSP
+        var nodeCount2 = 6; //Vertex Cover
+        var nodeCount3 = 8; //K-biconexo
+        var nodeCount4 = 5; //Clique
         for (var i = 0; i < nodeCount; i++) {
             nodesTSP.push({
                 id: i,
                 label: String(i)
             });
-
             connectionCount[i] = 0;
-
-            // create edges in a scale-free-network way
-            /*if (i == 1) {
-                var from = i;
-                var to = 0;
-                edgesTSP.push({
-                    from: from,
-                    to: to,
-                    value: 3
-                });
-                connectionCount[from]++;
-                connectionCount[to]++;
-            }
-            else if (i > 1) {
-                var conn = edgesTSP.length * 2;
-                var rand = Math.floor(Math.random() * conn);
-                var cum = 0;
-                var j = 0;
-                while (j < connectionCount.length && cum < rand) {
-                    cum += connectionCount[j];
-                    j++;
-                }
-
-
-                var from = i;
-                var to = j;
-                edgesTSP.push({
-                    from: from,
-                    to: to,
-                    value: 3
-                });
-                connectionCount[from]++;
-                connectionCount[to]++;
-            }*/
         }
+
+        for (var i = 0; i < nodeCount2; i++) {
+            nodesVC.push({
+                id: i,
+                label: String(i)
+            });
+            connectionCountVC[i] = 0;
+        }
+
+        for (var i = 0; i < nodeCount3; i++) {
+            nodesKB.push({
+                id: i,
+                label: String(i)
+            });
+            connectionCountKB[i] = 0;
+        }
+
+        for (var i = 0; i < nodeCount4; i++) {
+            nodesCli.push({
+                id: i,
+                label: String(i)
+            });
+            connectionCountCli[i] = 0;
+        }
+
+
         for (var i = 0; i < nodesTSP.length; i++) {
             for (var j = 0; j < nodesTSP.length; j++) {
                 var edgeVerfifiacion1 = {from: i, to: j};
@@ -209,6 +217,83 @@ Template.main.onRendered(function () {
                 }
             }
         }
+
+        for (var i = 0; i < nodesVC.length; i++) {
+            for (var j = 0; j < nodesVC.length; j++) {
+                var edgeVerfifiacion1 = {from: i, to: j};
+                var edgeVerfifiacion2 = {from: j, to: i};
+                var foundEdgeVerfifiacion = edgesVC.filter(function( edge ) {
+                    return (edge.from == edgeVerfifiacion1.from && edge.to == edgeVerfifiacion1.to) || (edge.from == edgeVerfifiacion2.from && edge.to == edgeVerfifiacion2.to);
+                });
+                if(nodesTSP[i] != nodesTSP[j] && foundEdgeVerfifiacion.length == 0 ){
+                    var from = i;
+                    var to = j;
+                    //console.log('from = ' + i + ' to = ' + j);
+                    var conn = edgesVC.length * 2;
+                    var rand = Math.floor(Math.random() * conn);
+                    edgesVC.push({
+                        from: from,
+                        to: to,
+                        value: rand,
+                        label: rand
+                    });
+                    connectionCountVC[from]++;
+                    connectionCountVC[to]++;
+                }
+            }
+        }
+
+        for (var i = 0; i < nodesKB.length; i++) {
+            for (var j = 0; j < nodesKB.length; j++) {
+                var edgeVerfifiacion1 = {from: i, to: j};
+                var edgeVerfifiacion2 = {from: j, to: i};
+                var foundEdgeVerfifiacion = edgesKB.filter(function( edge ) {
+                    return (edge.from == edgeVerfifiacion1.from && edge.to == edgeVerfifiacion1.to) || (edge.from == edgeVerfifiacion2.from && edge.to == edgeVerfifiacion2.to);
+                });
+                if(nodesKB[i] != nodesKB[j] && foundEdgeVerfifiacion.length == 0 ){
+                    var from = i;
+                    var to = j;
+                    //console.log('from = ' + i + ' to = ' + j);
+                    var conn = edgesKB.length * 2;
+                    var rand = Math.floor(Math.random() * conn);
+                    edgesKB.push({
+                        from: from,
+                        to: to,
+                        value: rand,
+                        label: rand
+                    });
+                    connectionCountKB[from]++;
+                    connectionCountKB[to]++;
+                }
+            }
+        }
+
+        for (var i = 0; i < nodesCli.length; i++) {
+            for (var j = 0; j < nodesCli.length; j++) {
+                var edgeVerfifiacion1 = {from: i, to: j};
+                var edgeVerfifiacion2 = {from: j, to: i};
+                var foundEdgeVerfifiacion = edgesCli.filter(function( edge ) {
+                    return (edge.from == edgeVerfifiacion1.from && edge.to == edgeVerfifiacion1.to) || (edge.from == edgeVerfifiacion2.from && edge.to == edgeVerfifiacion2.to);
+                });
+                if(nodesCli[i] != nodesCli[j] && foundEdgeVerfifiacion.length == 0 ){
+                    var from = i;
+                    var to = j;
+                    //console.log('from = ' + i + ' to = ' + j);
+                    var conn = edgesCli.length * 2;
+                    var rand = Math.floor(Math.random() * conn);
+                    edgesCli.push({
+                        from: from,
+                        to: to,
+                        value: rand,
+                        label: rand
+                    });
+                    connectionCountCli[from]++;
+                    connectionCountCli[to]++;
+                }
+            }
+        }
+
+
         // create a network
         var container = document.getElementById('visualizationTSP');
         var data = {
@@ -219,24 +304,75 @@ Template.main.onRendered(function () {
             stabilize:true,
             edges : {
                 fontStrokeWidth : 1,
+                fontStrokeColor : '#FFFFFF',
+                fontFill        : 'none',
+                color: "#000000"
+            }
+        };
+        networkTSP = new vis.Network(container, data, options);
+
+        var container = document.getElementById('visualizationVC');
+        var data = {
+            nodes: nodesVC,
+            edges: edgesVC
+        };
+        var options = {
+            stabilize:true,
+            edges : {
+                fontStrokeWidth : 1,
                 fontStrokeColor : '#d1d1d1',
                 fontFill        : 'none'
             }
         };
-        networkTSP = new vis.Network(container, data, options);
+        networkVC = new vis.Network(container, data, options);
+
+        var container = document.getElementById('visualizationKB');
+        var data = {
+            nodes: nodesKB,
+            edges: edgesKB
+        };
+        var options = {
+            stabilize:true,
+            edges : {
+                fontStrokeWidth : 1,
+                fontStrokeColor : '#d1d1d1',
+                fontFill        : 'none'
+            }
+        };
+        networkKB = new vis.Network(container, data, options);
+
+        var container = document.getElementById('visualizationCli');
+        var data = {
+            nodes: nodesCli,
+            edges: edgesCli
+        };
+        var options = {
+            stabilize:true,
+            edges : {
+                fontStrokeWidth : 1,
+                fontStrokeColor : '#d1d1d1',
+                fontFill        : 'none'
+            }
+        };
+        networkCli = new vis.Network(container, data, options);
 
         // add event listeners
         networkTSP.on('select', function(params) {
             document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
         });
-        /*networkTSP.on('stabilized', function (params) {
-            document.getElementById('stabilization').innerHTML = 'Stabilization took ' + params.iterations + ' iterations.';
+
+        networkVC.on('select', function(params) {
+            document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
         });
-        networkTSP.on('startStabilization', function (params) {
-            document.getElementById('stabilization').innerHTML = 'Stabilizing...';
-        });*/
+        networkKB.on('select', function(params) {
+            document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
+        });
+        networkCli.on('select', function(params) {
+            document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
+        });
+
 });
+
 
 Template.main.onDestroyed(function () {
 });
-
