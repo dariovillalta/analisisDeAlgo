@@ -71,7 +71,7 @@
 							<h2>Travelling Salesman Problem</h2>
 							<p>El problema del Agente Viajero tiene como objetivo encontrar un recorrido completo que conecte todos los nodos de un grafo no
                 dirigido, visitándolos tan solo una vez y volviendo al punto de partida, minimizando la distancia total de la ruta. </p>
-                <button id="recorrerTSP" class="primary-btn hover d-inline-flex align-items-center"><span class="mr-10">Calcular</span><span class="lnr lnr-arrow-right"></span></button>
+                <button id="recorrerTSP" class="primary-btn hover d-inline-flex align-items-center"><span class="mr-10">Calcular</span><span class="lnr lnr-arrow-right" data-toggle="modal" data-target="myModal"></span></button>
 						</div>
 					</div>
 				</div>
@@ -162,7 +162,7 @@
     						<div class="section-title text-center">
     							<h2>Clique</h2>
     							<p>Este problema de decisión se usa para determinar cuándo un grafo contiene un clique de al menos un tamaño k. </p>
-                    <button id="recorrerTSP" class="primary-btn hover d-inline-flex align-items-center"><span class="mr-10">Calcular</span><span class="lnr lnr-arrow-right"></span></button>
+                    <button id="recorrerClique" class="primary-btn hover d-inline-flex align-items-center"><span class="mr-10">Calcular</span><span class="lnr lnr-arrow-right"></span></button>
     						</div>
     					</div>
     				</div>
@@ -170,12 +170,36 @@
     		</div>
     	</div>
 
-	<script src="js/vendor/jquery-2.2.4.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-	<script src="js/vendor/bootstrap.min.js"></script>
-	<script src="js/jquery.ajaxchimp.min.js"></script>
-	<script src="js/owl.carousel.min.js"></script>
-	<script src="js/jquery.nice-select.min.js"></script>
-	<script src="js/jquery.magnific-popup.min.js"></script>
-	<script src="js/main.js"></script>
+
+	<!-- Modal -->
+	<div id="myModal" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+
+	    <!-- Modal content-->
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">Resultados</h4>
+	      </div>
+	      <div class="modal-body">
+	      	<div class="row">
+	      		<p class="bold">Tiempo:  </p>
+	        	<p> {{tiempo}}s</p>
+	      	</div>
+	      	<div class="row">
+	      		<p class="bold">Recorrido:  </p>
+	        	<p> {{recorrido}}</p>
+	      	</div>
+	      	<div class="row">
+	      		<p class="bold">Total:  </p>
+	        	<p> {{total}}</p>
+	      	</div>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+
+	  </div>
+	</div>
 </template>

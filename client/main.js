@@ -3,10 +3,25 @@ import './main.html';
 var networkTSP, nodesTSP, edgesTSP;
 var networkVC, nodesVC, edgesVC;
 var networkKC, nodesKC, edgesKC, nodesDataSetKC;
-var networkCli, nodesCli, edgesCli;
-var totalPathCost;
+var networkCli, nodesCli, edgesCli, clique = [];
+var totalPathCost, bandera = 0, seconds, recorrido = [];
+var timerDepen = new Tracker.Dependency();
+var recorridoDepen = new Tracker.Dependency();
+var totalDepen = new Tracker.Dependency();
 
 Template.main.helpers({
+    tiempo(){
+        timerDepen.depend();
+        return seconds;
+    },
+    recorrido(){
+        recorridoDepen.depend();
+        return recorrido;
+    },
+    total(){
+        totalDepen.depend();
+        return total;
+    }
 });
 
 function print(arr) {
@@ -31,6 +46,141 @@ function getEdgesOfNodeKC(nodeId) {
     return edgesKC.filter(function (edge) {
         return edge.from === nodeId || edge.to === nodeId;
     });
+}
+
+function getEdgesOfNodeCli(Vertices, nodeId) {
+    var nodoIDBefore = edgesCli.filter(function (edge) {
+        return edge.from === nodeId || edge.to === nodeId;
+    });
+    var nodoIDAfter = [];
+    for (var j = 0; j < Vertices.length; j++) {
+        for (var i = 0; i < nodoIDBefore.length; i++) {
+            /*console.log('>>>>>>>>>>');
+            console.log(nodoIDBefore[i]);
+            console.log("nodeId = "+nodeId);
+            console.log(Vertices[j]);
+            console.log(nodoIDBefore[i].from == nodeId);
+            console.log(Vertices[j] == nodoIDBefore[i].to);
+            console.log(nodoIDBefore[i].to != nodeId);
+            console.log('>>>');
+            console.log(Vertices[j] == nodoIDBefore[i].from);
+            console.log(nodoIDBefore[i].from != nodeId);
+            console.log('>>>>>>>>>>');*/
+            if(nodoIDBefore[i].from == nodeId && Vertices[j] == nodoIDBefore[i].to && nodoIDBefore[i].to != nodeId)
+                nodoIDAfter.push(nodoIDBefore[i].to);
+            else if(Vertices[j] == nodoIDBefore[i].from && nodoIDBefore[i].from != nodeId)
+                nodoIDAfter.push(nodoIDBefore[i].from);
+        };
+    };
+    /*console.log('----->');
+    console.log('nodeId = '+nodeId);
+    console.log('Vertices');
+    console.log(Vertices);
+    console.log('nodoIDBefore');
+    console.log(nodoIDBefore);
+    console.log('nodoIDAfter');
+    console.log(nodoIDAfter);
+    console.log('----->');*/
+    return nodoIDAfter;
+}
+
+function BronKerbosch1(maxClique, Vertices, ningunVertice) { // R, P, X
+    bandera++;
+    //console.log('Sumado bandera = '+bandera);
+    /*console.log(bandera);
+    console.log('//////////');*/
+    console.log('//////////');
+    console.log('R = ');
+    console.log(maxClique);
+    console.log('P = ');
+    console.log(Vertices);
+    console.log('X = ');
+    console.log(ningunVertice);
+    console.log('//////////');
+    /*if(bandera == 10)
+        return;*/
+    if(Vertices.length == 0 && ningunVertice.length == 0){
+        console.log('---->');
+        console.log(maxClique);
+        console.log(Vertices);
+        console.log(ningunVertice);
+        console.log('---->');
+        clique.push(maxClique);
+        //return maxClique;
+    }
+    for (var i = 0; i < Vertices.length; i++) {
+        /*console.log('Nodos Hermanos de i = '+Vertices[i]);
+        console.log(VerticesCopia);
+        console.log(edgesCli);*/
+        /*console.log('\t');
+        console.log('nodo = '+Vertices[i]+ '    i = '+i);
+        console.log('Vertices.length = '+Vertices.length);
+        console.log('P = ');
+        console.log(Vertices);
+        console.log(maxClique);
+        console.log('\tclique');*/
+        console.log('---->');
+        console.log('R = ');
+        console.log(maxClique);
+        console.log(maxClique.concat(Vertices[i]));
+        console.log('P = ');
+        console.log(Vertices);
+        console.log(getEdgesOfNodeCli(Vertices, Vertices[i]));
+        console.log('X = ');
+        console.log(ningunVertice);
+        console.log(getEdgesOfNodeCli(ningunVertice, Vertices[i]));
+        console.log('---->');
+        BronKerbosch1(maxClique.concat(Vertices[i]), getEdgesOfNodeCli(Vertices, Vertices[i]), getEdgesOfNodeCli(ningunVertice, Vertices[i]));
+        bandera--;
+        //console.log('Restado bandera = '+bandera);
+        /*console.log('antes');
+        console.log(Vertices);*/
+        //ningunVertice = ningunVerticeCopia;
+        ningunVertice.push(Vertices[i]);
+        for (var j = 0; j < Vertices.length; j++) {
+            if(Vertices[j] == Vertices[i]){
+                Vertices.splice(j, 1);
+            }
+        };
+        /*console.log('despues');
+        console.log(Vertices);*/
+        for (var j = 0; j < maxClique.length; j++) {
+            if(maxClique[j] == Vertices[i])
+                maxClique.splice(j, 1);
+        };
+        /*console.log('fin');
+        console.log('R = ');
+        console.log(maxClique);*/
+        /*console.log('nodo = '+Vertices[i]+ '    i = '+i);
+        console.log('Vertices.length = '+Vertices.length);
+        console.log('P = ');
+        console.log(Vertices);
+        console.log(maxClique);*/
+        /*console.log(maxClique);
+        console.log(Vertices);
+        console.log(ningunVertice);
+        console.log('---->');
+        console.log('R = ');
+        console.log(maxCliqueCopia);
+        console.log('P = ');
+        console.log(VerticesCopia);
+        console.log('X = ');
+        console.log(ningunVerticeCopia);
+        console.log('---->');
+        console.log('END= '+node+ '    i = '+i+' Vertices.length = '+Vertices.length);
+        console.log('//////////');*/
+        console.log('fin for = '+ i);
+    };
+    /*console.log('//////////');
+    console.log('END');
+    console.log('R = ');
+    console.log(maxClique);
+    console.log('P = ');
+    console.log(Vertices);
+    console.log('X = ');
+    console.log(ningunVertice);
+    console.log('END');
+    console.log('//////////');*/
 }
 
 function shortestDistanceFromNode(edges, node) {
@@ -76,10 +226,8 @@ function shortestDistanceFromNode(edges, node) {
 
 Template.main.events({
     'click #recorrerTSP'(e){
-        console.log(networkTSP.getConnectedNodes(0));
-        console.log(getEdgesOfNodeTSP(3));
-        console.log(shortestDistanceFromNode(getEdgesOfNodeTSP(3), 3));
-        console.log(edgesTSP);
+        $("#myModal").modal('toggle');
+        var startDate = new Date();
         var currentNode = 0;
         var visitedNodes = [];
         var unvisitedNodes = [];
@@ -89,63 +237,40 @@ Template.main.events({
             unvisitedNodes.push(nodesTSP[i].id);
         };
         //Mientras no se hayan visitados todos los nodos
-        console.log('/////////');
-        console.log('/////////');
         while(visitedNodes.length != nodesTSP.length){
             visitedNodes.push(currentNode);
-            /*console.log('visitedNodes');
-            console.log(visitedNodes);
-            console.log(networkTSP);
-            console.log(networkTSP.edges);*/
-            // arr = arreglo de vertices
             var arr = $.map(networkTSP.edges, function(value, index) {
                 return [value];
             });
-            // consiguiendo el nodo
-            /*console.log('nodo');
-            console.log(nodo);*/
-            //totalPathCost+=nodo.value;
-            /*console.log('totalPathCost');
-            console.log(totalPathCost);
-            console.log(unvisitedNodes);*/
             for (var i = 0; i < unvisitedNodes.length; i++) {
                 if(unvisitedNodes[i] == currentNode){
                     unvisitedNodes.splice(i, 1);
                     break;
                 }
             };
-            //console.log(unvisitedNodes);
             var edges = getEdgesOfNodeTSP(currentNode);
-            console.log('currentNode');
-            console.log(currentNode);
-            /*console.log('edges');
-            console.log(edges);
-            print(edges);
-            console.log('visitedNodes');
-            console.log(visitedNodes);
-            print(visitedNodes);*/
             for (var i = 0; i < visitedNodes.length; i++) {
                 for (var j = 0; j < edges.length; j++) {
                     if((visitedNodes[i] == edges[j].to && currentNode != edges[j].to) || (visitedNodes[i] == edges[j].from && currentNode != edges[j].from))
                         edges.splice(j,1);
                 };
             };
-            /*console.log('edges');
-            console.log(edges);
-            print(edges);*/
-            /*console.log('currentNode');
-            console.log(currentNode);*/
             currentNode = shortestDistanceFromNode(edges, currentNode);
-            //console.log(currentNode);
-            /*while( jQuery.inArray( currentNode, visitedNodes ) != -1 ){
-                console.log(jQuery.inArray( currentNode, visitedNodes ));
-                currentNode = shortestDistanceFromNode(getEdgesOfNodeTSP(currentNode), currentNode);
-            }*/
         }
         console.log(visitedNodes);
         console.log(totalPathCost);
+        var endDate = new Date();
+        seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+        console.log(seconds);
+        recorrido = visitedNodes;
+        total = totalPathCost;
+        timerDepen.changed();
+        totalDepen.changed();
+        recorridoDepen.changed();
     },
     'click #recorrerVC'(e){
+        var startDate = new Date();
+        $("#myModal").modal('toggle');
         var currentNode = 0;
         var visitedNodes = [];
         var visitedNodesPath = [];
@@ -180,18 +305,26 @@ Template.main.events({
                 };
             }
         };
-        console.log('///////////');
+        var endDate = new Date();
+        seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+        console.log(seconds);
         for (var i = 0; i < visitedNodes.length; i++) {
             if(visitedNodes[i])
                 console.log(i);
         };
-        console.log(visitedNodes);
         console.log('Nodos Visitados = ');
         console.log(visitedNodesPath);
         console.log('Cantidad mínima de vértices = '+ visitedNodesPath.length);
-        console.log(edgesVC);
+        recorrido = visitedNodesPath;
+        total = visitedNodesPath.length;
+        timerDepen.changed();
+        totalDepen.changed();
+        recorridoDepen.changed();
+
     },
     'click #recorrerKC'(e){
+        var startDate = new Date();
+        $("#myModal").modal('toggle');
         var currentNode = 0;
         var resultNodes = [];
         var disponibles = [];
@@ -212,81 +345,83 @@ Template.main.events({
         //Asignando al resto de vertices
         for (var i = 1; i < nodesKC.length; i++) {
             var verticesAdjuntos = getEdgesOfNodeKC(i);
-            console.log('1');
-            console.log('1');
-            console.log(disponibles);
-            console.log('i = '+ i);
             for (var j = 0; j < verticesAdjuntos.length; j++) {
-                console.log('resultNodes[j]');
-                console.log(resultNodes[j]);
-                console.log(resultNodes);
-                console.log(verticesAdjuntos[j]);
                 if(resultNodes[verticesAdjuntos[j].from] != -1 && verticesAdjuntos[j].from != i){
                     disponibles[verticesAdjuntos[j].from] = true;
-                    console.log('from');
-                    console.log(disponibles[verticesAdjuntos[j].from]);
-                    console.log(verticesAdjuntos[j].from);
                 }
                 else if(resultNodes[verticesAdjuntos[j].to] != -1 && verticesAdjuntos[j].to != i){
-                    console.log('to');
                     disponibles[verticesAdjuntos[j].to] = true;
-                    console.log(disponibles[verticesAdjuntos[j].to]);
-                    console.log(verticesAdjuntos[j].to);
                 }
             }
             var colorDisponible;
-            console.log('i = '+ i);
-            console.log(disponibles);
             for (colorDisponible = 0; colorDisponible < nodesKC.length; colorDisponible++){
-                console.log('/////////');
-                console.log(colorDisponible);
-                console.log('/////////');
                 if (disponibles[colorDisponible] == false)
                     break;
             }
-            console.log('resultNodes');
-            console.log(resultNodes);
             resultNodes[i] = colorDisponible;
-            console.log(resultNodes);
 
             //Reseteando valores para siguiente iteracion
             verticesAdjuntos = getEdgesOfNodeKC(i);
             for (var j = 0; j < verticesAdjuntos.length; j++) {
-                console.log(verticesAdjuntos[j]);
-                console.log(resultNodes[verticesAdjuntos[j].from]);
-                console.log(resultNodes[verticesAdjuntos[j].from] != -1);
-                console.log(resultNodes[verticesAdjuntos[j].to]);
-                console.log(resultNodes[verticesAdjuntos[j].to] != -1);
                 if(resultNodes[verticesAdjuntos[j].from] != -1){
-                    console.log("1");
                     disponibles[verticesAdjuntos[j].from] = false;
                 }
                 else if(resultNodes[verticesAdjuntos[j].to] != -1){
-                    console.log("2");
                     disponibles[verticesAdjuntos[j].to] = false;
                 }
             }
-            console.log(disponibles);
-            console.log('2');
-            console.log('2');
-            console.log('2');
         };
 
-        ///////////////////////////
-        console.log('///////////');
         //nodesDataSetKC = new vis.DataSet(nodesKC);
         for (var i = 0; i < nodesKC.length; i++) {
             var currentnode = nodesDataSetKC.get(i);
-            console.log(currentnode);
             currentnode.color = {
                 border: arregloColoresBorde[i],
                 background: arregloColoresFondo[i]
             }
             nodesDataSetKC.update(currentnode);
-            console.log(i + " ---> " + resultNodes[i]);
         };
+        var endDate = new Date();
+        seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+        console.log(seconds);
+        for (var i = 0; i < nodesKC.length; i++) {
+            recorrido.push(nodesKC[i].id);
+        };
+        total = 0;
+        timerDepen.changed();
+        totalDepen.changed();
+        recorridoDepen.changed();
+        console.log(disponibles);
         console.log('Nodos Visitados = ');
-        console.log(edgesKC);
+        console.log(nodesKC);
+    },
+    'click #recorrerClique'(e){
+        clique = [];
+        var startDate = new Date();
+        $("#myModal").modal('toggle');
+
+        var R = [];
+        var X = [];
+        var nodosIDArray = [];
+        //nodesDataSetKC = new vis.DataSet(nodesKC);
+        for (var i = 0; i < nodesCli.length; i++) {
+            nodosIDArray.push(nodesCli[i].id);
+        };
+        /*console.log(R);
+        console.log(nodosIDArray);
+        console.log(X);*/
+        //console.log('///////////');
+        console.log(BronKerbosch1(R, nodosIDArray, X));
+        var endDate = new Date();
+        seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+        console.log(seconds);
+        recorrido = clique;
+        total = clique[0].length;
+        timerDepen.changed();
+        totalDepen.changed();
+        recorridoDepen.changed();
+        console.log('clique');
+        console.log(clique);
     }
 });
 
@@ -340,13 +475,13 @@ Template.main.onRendered(function () {
             connectionCountKB[i] = 0;
         }*/
 
-        for (var i = 0; i < nodeCount4; i++) {
+        /*for (var i = 0; i < nodeCount4; i++) {
             nodesCli.push({
                 id: i,
                 label: String(i)
             });
             connectionCountCli[i] = 0;
-        }
+        }*/
 
 
         for (var i = 0; i < nodesTSP.length; i++) {
@@ -424,7 +559,7 @@ Template.main.onRendered(function () {
             }
         }*/
 
-        for (var i = 0; i < nodesCli.length; i++) {
+        /*for (var i = 0; i < nodesCli.length; i++) {
             for (var j = 0; j < nodesCli.length; j++) {
                 var edgeVerfifiacion1 = {from: i, to: j};
                 var edgeVerfifiacion2 = {from: j, to: i};
@@ -447,7 +582,7 @@ Template.main.onRendered(function () {
                     connectionCountCli[to]++;
                 }
             }
-        }
+        }*/
 
         /********* VERTEX GRAPH *********/
 
@@ -499,7 +634,7 @@ Template.main.onRendered(function () {
         /********* AGREGANDO NODOS ALEATORIOS EXTRAS *********/
         var randSize = Math.floor(Math.random() * nodeCount2);
         var randStart = Math.floor(Math.random() * randSize);
-        for (var i = randStart; i < randSize+nodeCount2; i++) {
+        for (var i = randStart; i < nodeCount2; i++) {
             // create edges in a scale-free-network way
             var conn = edgesVC.length * 2;
             var rand = Math.floor(Math.random() * conn);
@@ -614,6 +749,97 @@ Template.main.onRendered(function () {
         }
 
         /********* FIN COLOREABILIDAD GRAPH *********/
+
+        /********* CLIQUE GRAPH *********/
+
+        /*for (var i = 0; i < nodeCount4; i++) {
+            nodesCli.push({
+                id: i,
+                label: String(i)
+            });
+
+            connectionCountCli[i] = 0;
+
+            // create edges in a scale-free-network way
+            if (i == 1) {
+                var from = i;
+                var to = 0;
+                var conn = nodeCount2 * 2;
+                var rand = Math.floor(Math.random() * conn);
+                edgesCli.push({
+                    from: from,
+                    to: to,
+                    value: rand
+                });
+                connectionCountCli[from]++;
+                connectionCountCli[to]++;
+            }
+            else if (i > 1) {
+                var conn = edgesCli.length * 2;
+                var rand = Math.floor(Math.random() * conn);
+                var cum = 0;
+                var j = 0;
+                while (j < connectionCountCli.length && cum < rand) {
+                    cum += connectionCountCli[j];
+                    j++;
+                }
+
+
+                var from = i;
+                var to = j;
+                edgesCli.push({
+                    from: from,
+                    to: to,
+                    value: 3
+                });
+                connectionCountCli[from]++;
+                connectionCountCli[to]++;
+            }
+        }*/
+
+        /********* AGREGANDO NODOS ALEATORIOS EXTRAS *********/
+        /*var randSize2 = Math.floor(Math.random() * nodeCount4);
+        var randStart2 = Math.floor(Math.random() * randSize2);
+        for (var i = randStart2; i < nodeCount4; i++) {
+            // create edges in a scale-free-network way
+            var conn = edgesCli.length * 2;
+            var rand = Math.floor(Math.random() * conn);
+            var cum = 0;
+            var j = 0;
+            while (j < connectionCountCli.length && cum < rand) {
+                cum += connectionCountCli[j];
+                j++;
+            }
+
+            var existeRelacion = edgesCli.filter(function (edge) {
+                return (i == edge.to && j == edge.from) || (i == edge.from && j == edge.to);
+            });
+            if(existeRelacion.length == 0 && i != j){
+                var from = i;
+                var to = j;
+                var conn = edgesCli.length * 2;
+                var randValue = Math.floor(Math.random() * conn);
+                edgesCli.push({
+                    from: from,
+                    to: to,
+                    value: randValue
+                });
+                connectionCountCli[from]++;
+                connectionCountCli[to]++;
+            }
+        }*/
+        nodesCli.push({id: 1, label: String(1)});
+        nodesCli.push({id: 2, label: String(2)});
+        nodesCli.push({id: 3, label: String(3)});
+        nodesCli.push({id: 4, label: String(4)});
+
+        edgesCli.push({from: 1, to: 2, value: 1});
+        edgesCli.push({from: 1, to: 3, value: 1});
+        edgesCli.push({from: 2, to: 3, value: 1});
+        edgesCli.push({from: 2, to: 4, value: 1});
+        console.log(edgesCli);
+
+        /********* FIN CLIQUE GRAPH *********/
 
 
         // create a network
