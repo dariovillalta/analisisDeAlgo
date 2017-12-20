@@ -119,7 +119,7 @@ function BronKerbosch1(maxClique, Vertices, ningunVertice) { // R, P, X
         console.log(Vertices);
         console.log(maxClique);
         console.log('\tclique');*/
-        console.log('---->');
+        /*console.log('---->');
         console.log('R = ');
         console.log(maxClique);
         console.log(maxClique.concat(Vertices[i]));
@@ -129,7 +129,7 @@ function BronKerbosch1(maxClique, Vertices, ningunVertice) { // R, P, X
         console.log('X = ');
         console.log(ningunVertice);
         console.log(getEdgesOfNodeCli(ningunVertice, Vertices[i]));
-        console.log('---->');
+        console.log('---->');*/
         BronKerbosch1(maxClique.concat(Vertices[i]), getEdgesOfNodeCli(Vertices, Vertices[i]), getEdgesOfNodeCli(ningunVertice, Vertices[i]));
         bandera--;
         //console.log('Restado bandera = '+bandera);
@@ -144,10 +144,10 @@ function BronKerbosch1(maxClique, Vertices, ningunVertice) { // R, P, X
         };
         /*console.log('despues');
         console.log(Vertices);*/
-        for (var j = 0; j < maxClique.length; j++) {
+        /*for (var j = 0; j < maxClique.length; j++) {
             if(maxClique[j] == Vertices[i])
                 maxClique.splice(j, 1);
-        };
+        };*/
         /*console.log('fin');
         console.log('R = ');
         console.log(maxClique);*/
@@ -169,7 +169,7 @@ function BronKerbosch1(maxClique, Vertices, ningunVertice) { // R, P, X
         console.log('---->');
         console.log('END= '+node+ '    i = '+i+' Vertices.length = '+Vertices.length);
         console.log('//////////');*/
-        console.log('fin for = '+ i);
+        console.log('fin for = '+ i + ' bandera = '+bandera);
     };
     /*console.log('//////////');
     console.log('END');
@@ -422,6 +422,14 @@ Template.main.events({
         recorridoDepen.changed();
         console.log('clique');
         console.log(clique);
+        var temp;
+        for (var i = 0; i < clique.length; i++) {
+            if (i ==0)
+                temp = clique[i].length;
+            if(temp < clique[i].length)
+                temp = clique[i].length;
+        };
+        clique = clique[temp];
     }
 });
 
@@ -450,7 +458,7 @@ Template.main.onRendered(function () {
         var nodeCount = 10; //TSP
         var nodeCount2 = 6; //Vertex Cover
         var nodeCount3 = 8; //K-coloreabilidad
-        var nodeCount4 = 5; //Clique
+        var nodeCount4 = 10; //Clique
         for (var i = 0; i < nodeCount; i++) {
             nodesTSP.push({
                 id: i,
@@ -752,7 +760,7 @@ Template.main.onRendered(function () {
 
         /********* CLIQUE GRAPH *********/
 
-        /*for (var i = 0; i < nodeCount4; i++) {
+        for (var i = 0; i < nodeCount4; i++) {
             nodesCli.push({
                 id: i,
                 label: String(i)
@@ -795,10 +803,10 @@ Template.main.onRendered(function () {
                 connectionCountCli[from]++;
                 connectionCountCli[to]++;
             }
-        }*/
+        }
 
         /********* AGREGANDO NODOS ALEATORIOS EXTRAS *********/
-        /*var randSize2 = Math.floor(Math.random() * nodeCount4);
+        var randSize2 = Math.floor(Math.random() * nodeCount4);
         var randStart2 = Math.floor(Math.random() * randSize2);
         for (var i = randStart2; i < nodeCount4; i++) {
             // create edges in a scale-free-network way
@@ -827,8 +835,14 @@ Template.main.onRendered(function () {
                 connectionCountCli[from]++;
                 connectionCountCli[to]++;
             }
-        }*/
-        nodesCli.push({id: 1, label: String(1)});
+        }
+        edgesCli.push({from: 0, to: 1, value: 1});
+        edgesCli.push({from: 0, to: 2, value: 1});
+        edgesCli.push({from: 0, to: 3, value: 1});
+        edgesCli.push({from: 1, to: 2, value: 1});
+        edgesCli.push({from: 1, to: 3, value: 1});
+        edgesCli.push({from: 2, to: 3, value: 1});
+        /*nodesCli.push({id: 1, label: String(1)});
         nodesCli.push({id: 2, label: String(2)});
         nodesCli.push({id: 3, label: String(3)});
         nodesCli.push({id: 4, label: String(4)});
@@ -837,7 +851,7 @@ Template.main.onRendered(function () {
         edgesCli.push({from: 1, to: 3, value: 1});
         edgesCli.push({from: 2, to: 3, value: 1});
         edgesCli.push({from: 2, to: 4, value: 1});
-        console.log(edgesCli);
+        console.log(edgesCli);*/
 
         /********* FIN CLIQUE GRAPH *********/
 
